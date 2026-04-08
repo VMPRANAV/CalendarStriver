@@ -1,0 +1,74 @@
+
+/* Perspective container: Essential for the 3D flip effect.
+  Applied to the parent of the animating calendar grid.
+*/
+@import "tailwindcss";
+.perspective-container {
+  perspective: 1500px;
+  perspective-origin: top;
+}
+
+/* The "Wall Calendar Flip"
+  Mimics the physics of a page lifting from the top spiral binder.
+*/
+.calendar-flip-enter {
+  transform: rotateX(-30deg);
+  opacity: 0;
+  transform-origin: top;
+}
+
+.calendar-flip-active {
+  transform: rotateX(0deg);
+  opacity: 1;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
+}
+
+.calendar-flip-exit {
+  transform: rotateX(30deg);
+  opacity: 0;
+  transform-origin: bottom;
+  transition: transform 0.4s ease-in, opacity 0.3s ease-in;
+}
+
+/* Soft Sticky Note Animation
+  A subtle wiggle to give the notes section a "creative" paper feel.
+*/
+@keyframes paper-float {
+  0% { transform: translateY(0) rotate(-0.5deg); }
+  50% { transform: translateY(-3px) rotate(0.5deg); }
+  100% { transform: translateY(0) rotate(-0.5deg); }
+}
+
+.animate-paper {
+  animation: paper-float 4s ease-in-out infinite;
+  box-shadow: var(--shadow);
+}
+
+/* Interactive Date Selection
+  Provides the "clear visual state" for range selection.
+*/
+.selection-pulse {
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 var(--accent-border); }
+  70% { box-shadow: 0 0 0 6px rgba(170, 59, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(170, 59, 255, 0); }
+}
+
+/* Day Range "Bridge"
+  Connects the start and end dates with your --accent-bg.
+*/
+.range-bridge {
+  position: relative;
+  z-index: 1;
+}
+
+.range-bridge::after {
+  content: '';
+  position: absolute;
+  inset: 4px -2px;
+  background: var(--accent-bg);
+  z-index: -1;
+}
