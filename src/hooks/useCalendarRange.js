@@ -45,6 +45,7 @@ const sortDates = (firstDate, secondDate) => {
 export const useCalendarRange = (currentDate) => {
   const monthKey = format(currentDate, 'yyyy-MM');
   const [draftSelection, setDraftSelection] = useState(null);
+  const [draftNote, setDraftNote] = useState(null);
   const [activeNoteId, setActiveNoteId] = useState('month-default');
   const [storedNotes, setStoredNotes] = useLocalStorage(STORAGE_KEY, {});
 
@@ -85,6 +86,23 @@ export const useCalendarRange = (currentDate) => {
       };
     }
 
+    if (activeNoteId === 'draft-selection' && draftSelection?.start && draftNote) {
+      const startKey = format(draftSelection.start, 'yyyy-MM-dd');
+      const endKey = format(draftSelection.end || draftSelection.start, 'yyyy-MM-dd');
+
+      return {
+        id: 'draft-selection',
+        type: startKey === endKey ? 'single' : 'range',
+        label:
+          startKey === endKey
+            ? format(parseISO(startKey), 'MMM d, yyyy')
+            : `${format(parseISO(startKey), 'MMM d')} - ${format(parseISO(endKey), 'MMM d, yyyy')}`,
+        startKey,
+        endKey,
+        ...draftNote,
+      };
+    }
+
     const matchedEntry = monthNotes.entries.find((entry) => entry.id === activeNoteId);
 
     if (!matchedEntry) {
@@ -105,7 +123,7 @@ export const useCalendarRange = (currentDate) => {
           ? format(parseISO(matchedEntry.startKey), 'MMM d, yyyy')
           : `${format(parseISO(matchedEntry.startKey), 'MMM d')} - ${format(parseISO(matchedEntry.endKey), 'MMM d, yyyy')}`,
     };
-  }, [activeNoteId, currentDate, monthKey, monthNotes.defaultNote, monthNotes.entries]);
+  }, [activeNoteId, currentDate, draftNote, draftSelection, monthKey, monthNotes.defaultNote, monthNotes.entries]);
 
   const entryForDate = (date, prioritizedEntryId) => {
     const matchingEntries = monthNotes.entries.filter((entry) => {
@@ -135,33 +153,18 @@ export const useCalendarRange = (currentDate) => {
     const existingSingle = monthNotes.entries.find(
       (entry) => entry.startKey === dateKey && entry.endKey === dateKey,
     );
-    const draftStartKey = draftSelection?.start
-      ? format(draftSelection.start, 'yyyy-MM-dd')
-      : null;
-    const draftSingleEntry = draftStartKey
-      ? monthNotes.entries.find(
-          (entry) => entry.startKey === draftStartKey && entry.endKey === draftStartKey,
-        )
-      : null;
 
     if (!draftSelection?.start || draftSelection.mode === 'range') {
       if (existingSingle) {
         setActiveNoteId(existingSingle.id);
+        setDraftNote(null);
       } else {
-        const newEntry = {
-          id: `note-${dateKey}`,
-          startKey: dateKey,
-          endKey: dateKey,
+        setDraftNote({
           content: '',
           color: monthNotes.defaultNote.color,
           textStyle: monthNotes.defaultNote.textStyle,
-        };
-
-        updateMonthNotes((currentMonthNotes) => ({
-          ...currentMonthNotes,
-          entries: [...currentMonthNotes.entries, newEntry],
-        }));
-        setActiveNoteId(newEntry.id);
+        });
+        setActiveNoteId('draft-selection');
       }
 
       setDraftSelection({ start: date, end: date, mode: 'single' });
@@ -170,7 +173,19 @@ export const useCalendarRange = (currentDate) => {
 
     if (isSameDay(date, draftSelection.start)) {
       setDraftSelection({ start: date, end: date, mode: 'single' });
-      setActiveNoteId(existingSingle?.id || 'month-default');
+      if (existingSingle) {
+        setActiveNoteId(existingSingle.id);
+        setDraftNote(null);
+      } else {
+        setActiveNoteId('draft-selection');
+        setDraftNote((currentDraft) =>
+          currentDraft || {
+            content: '',
+            color: monthNotes.defaultNote.color,
+            textStyle: monthNotes.defaultNote.textStyle,
+          },
+        );
+      }
       return;
     }
 
@@ -182,54 +197,31 @@ export const useCalendarRange = (currentDate) => {
     );
 
     if (existingRange) {
-      if (draftSingleEntry && draftSingleEntry.id !== existingRange.id) {
-        updateMonthNotes((currentMonthNotes) => ({
-          ...currentMonthNotes,
-          entries: currentMonthNotes.entries.filter((entry) => entry.id !== draftSingleEntry.id),
-        }));
-      }
-
       setActiveNoteId(existingRange.id);
+      setDraftNote(null);
     } else {
-      const rangeId = `note-${startKey}-${endKey}`;
-
-      if (draftSingleEntry) {
-        updateMonthNotes((currentMonthNotes) => ({
-          ...currentMonthNotes,
-          entries: currentMonthNotes.entries.map((entry) =>
-            entry.id === draftSingleEntry.id
-              ? {
-                  ...entry,
-                  id: rangeId,
-                  startKey,
-                  endKey,
-                }
-              : entry,
-          ),
-        }));
-      } else {
-        const newEntry = {
-          id: rangeId,
-          startKey,
-          endKey,
+      setActiveNoteId('draft-selection');
+      setDraftNote((currentDraft) =>
+        currentDraft || {
           content: '',
           color: monthNotes.defaultNote.color,
           textStyle: monthNotes.defaultNote.textStyle,
-        };
-
-        updateMonthNotes((currentMonthNotes) => ({
-          ...currentMonthNotes,
-          entries: [...currentMonthNotes.entries, newEntry],
-        }));
-      }
-
-      setActiveNoteId(rangeId);
+        },
+      );
     }
 
     setDraftSelection({ start, end, mode: 'range' });
   };
 
   const updateActiveNote = (updates) => {
+    if (activeNoteId === 'draft-selection') {
+      setDraftNote((currentDraft) => ({
+        ...(currentDraft || DEFAULT_NOTE),
+        ...updates,
+      }));
+      return;
+    }
+
     if (activeNoteId === 'month-default') {
       updateMonthNotes((currentMonthNotes) => ({
         ...currentMonthNotes,
@@ -249,6 +241,114 @@ export const useCalendarRange = (currentDate) => {
     }));
   };
 
+  const submitActiveNote = () => {
+    if (activeNoteId === 'draft-selection') {
+      const content = (draftNote?.content || '').trim();
+
+      if (!content || !draftSelection?.start) {
+        return;
+      }
+
+      const startKey = format(draftSelection.start, 'yyyy-MM-dd');
+      const endKey = format(draftSelection.end || draftSelection.start, 'yyyy-MM-dd');
+      const entryId = `note-${startKey}-${endKey}`;
+      const existingEntry = monthNotes.entries.find(
+        (entry) => entry.startKey === startKey && entry.endKey === endKey,
+      );
+
+      updateMonthNotes((currentMonthNotes) => ({
+        ...currentMonthNotes,
+        entries: existingEntry
+          ? currentMonthNotes.entries.map((entry) =>
+              entry.id === existingEntry.id
+                ? {
+                    ...entry,
+                    id: entryId,
+                    startKey,
+                    endKey,
+                    content: draftNote.content,
+                    color: draftNote.color,
+                    textStyle: draftNote.textStyle,
+                  }
+                : entry,
+            )
+          : [
+              ...currentMonthNotes.entries,
+              {
+                id: entryId,
+                startKey,
+                endKey,
+                content: draftNote.content,
+                color: draftNote.color,
+                textStyle: draftNote.textStyle,
+              },
+            ],
+      }));
+
+      setActiveNoteId('month-default');
+      setDraftSelection(null);
+      setDraftNote(null);
+      return;
+    }
+
+    if (activeNoteId !== 'month-default') {
+      setMonthDefaultActive();
+      return;
+    }
+
+    const content = monthNotes.defaultNote.content.trim();
+
+    if (!content) {
+      return;
+    }
+
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    const startKey = format(monthStart, 'yyyy-MM-dd');
+    const endKey = format(monthEnd, 'yyyy-MM-dd');
+    const monthRangeId = `note-${startKey}-${endKey}`;
+    const existingMonthRange = monthNotes.entries.find(
+      (entry) => entry.startKey === startKey && entry.endKey === endKey,
+    );
+
+    updateMonthNotes((currentMonthNotes) => ({
+      ...currentMonthNotes,
+      defaultNote: {
+        ...currentMonthNotes.defaultNote,
+        content: '',
+      },
+      entries: existingMonthRange
+        ? currentMonthNotes.entries.map((entry) =>
+            entry.id === existingMonthRange.id
+              ? {
+                  ...entry,
+                  id: monthRangeId,
+                  startKey,
+                  endKey,
+                  content: currentMonthNotes.defaultNote.content,
+                  color: currentMonthNotes.defaultNote.color,
+                  textStyle: currentMonthNotes.defaultNote.textStyle,
+                }
+              : entry,
+          )
+        : [
+            ...currentMonthNotes.entries,
+            {
+              id: monthRangeId,
+              startKey,
+              endKey,
+              content: currentMonthNotes.defaultNote.content,
+              color: currentMonthNotes.defaultNote.color,
+              textStyle: currentMonthNotes.defaultNote.textStyle,
+            },
+          ],
+    }));
+
+    setActiveNoteId('month-default');
+    setDraftSelection(null);
+    setDraftNote(null);
+  };
+
   const removeEntry = (entryId) => {
     updateMonthNotes((currentMonthNotes) => ({
       ...currentMonthNotes,
@@ -258,12 +358,14 @@ export const useCalendarRange = (currentDate) => {
     if (activeNoteId === entryId) {
       setActiveNoteId('month-default');
       setDraftSelection(null);
+      setDraftNote(null);
     }
   };
 
   const setMonthDefaultActive = () => {
     setActiveNoteId('month-default');
     setDraftSelection(null);
+    setDraftNote(null);
   };
 
   const selectEntry = (entryId) => {
@@ -276,6 +378,7 @@ export const useCalendarRange = (currentDate) => {
     const start = parseISO(matchedEntry.startKey);
     const end = parseISO(matchedEntry.endKey);
     setActiveNoteId(entryId);
+    setDraftNote(null);
     setDraftSelection({
       start,
       end,
@@ -289,6 +392,7 @@ export const useCalendarRange = (currentDate) => {
     if (nextMonthKey !== monthKey) {
       setActiveNoteId('month-default');
       setDraftSelection(null);
+      setDraftNote(null);
     }
   };
 
@@ -311,6 +415,7 @@ export const useCalendarRange = (currentDate) => {
     removeEntry,
     selectEntry,
     setMonthDefaultActive,
+    submitActiveNote,
     updateActiveNote,
     visibleEntries,
     entryForDate,

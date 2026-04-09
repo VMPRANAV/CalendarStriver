@@ -48,6 +48,7 @@ export default function CalendarRoot() {
     removeEntry,
     selectEntry,
     setMonthDefaultActive,
+    submitActiveNote,
     updateActiveNote,
     visibleEntries,
     entryForDate,
@@ -123,6 +124,7 @@ export default function CalendarRoot() {
                     activeNoteId={activeNoteId}
                     onRemoveEntry={removeEntry}
                     onResetEditor={setMonthDefaultActive}
+                    onSubmitActiveNote={submitActiveNote}
                     onSelectEntry={selectEntry}
                     onSetMonthDefault={setMonthDefaultActive}
                     onUpdateNote={updateActiveNote}

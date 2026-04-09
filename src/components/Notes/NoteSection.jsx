@@ -31,6 +31,7 @@ export const NoteSection = ({
   activeNoteId,
   onRemoveEntry,
   onResetEditor,
+  onSubmitActiveNote,
   onSelectEntry,
   onSetMonthDefault,
   onUpdateNote,
@@ -43,6 +44,18 @@ export const NoteSection = ({
   const handleDelete = (entryId) => {
     playDeleteSound();
     onRemoveEntry(entryId);
+  };
+
+  const canAddToList = activeNote.type === 'month' || activeNoteId === 'draft-selection';
+  const hasContent = activeNote.content.trim().length > 0;
+
+  const handleSubmit = () => {
+    if (canAddToList) {
+      onSubmitActiveNote();
+      return;
+    }
+
+    onResetEditor();
   };
 
   return (
@@ -133,12 +146,12 @@ export const NoteSection = ({
             value={activeNote.content}
             onChange={(event) => onUpdateNote({ content: event.target.value })}
             onKeyDown={(event) => {
-              if (event.key !== 'Enter' || event.shiftKey || activeNote.type === 'month') {
+              if (event.key !== 'Enter' || event.shiftKey) {
                 return;
               }
 
               event.preventDefault();
-              onResetEditor();
+              handleSubmit();
             }}
             placeholder="Write a note for this month, date, or selected range..."
             className={clsx(
@@ -146,6 +159,22 @@ export const NoteSection = ({
               textStyleClassName[activeNote.textStyle],
             )}
           />
+
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!hasContent}
+              className={clsx(
+                'rounded-full px-4 py-2 text-sm font-semibold transition-colors',
+                hasContent
+                  ? 'bg-gray-900 text-white hover:bg-gray-800'
+                  : 'cursor-not-allowed bg-gray-200 text-gray-400',
+              )}
+            >
+              {canAddToList ? 'Add To List' : 'Done'}
+            </button>
+          </div>
         </div>
       </div>
 
