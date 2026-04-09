@@ -37,7 +37,7 @@ const pageVariants = {
 };
 
 export default function CalendarRoot() {
-  const [currentDate, setCurrentDate] = useState(new Date(2022, 0, 1)); // January 2022 as per prompt
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1));
   const [transitionDirection, setTransitionDirection] = useState(1);
   const {
     activeNote,
