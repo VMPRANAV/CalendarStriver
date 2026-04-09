@@ -193,9 +193,9 @@ export default function CalendarRoot() {
             </div>
 
             {/* Right Panel: Functional Grid */}
-            <div className="flex lg:w-3/5 flex-col lg:h-full lg:min-h-0">
+            <div className="flex lg:w-3/5 flex-col lg:h-full lg:min-h-0 lg:overflow-hidden">
               <div
-                className="flex flex-1 flex-col gap-8 p-6 md:p-10 lg:min-h-0 lg:px-12 lg:pt-12 xl:px-16 xl:pt-16"
+                className="flex flex-1 flex-col gap-8 p-6 md:p-10 lg:min-h-0 lg:overflow-hidden lg:px-12 lg:pt-12 xl:px-16 xl:pt-16"
                 style={{ minHeight: 0 }}
               >
                 <Header
@@ -205,7 +205,7 @@ export default function CalendarRoot() {
                   theme={theme}
                   onToggleTheme={handleToggleTheme}
                 />
-                <div className="flex-1">
+                <div className="flex-1 lg:min-h-0 lg:overflow-y-auto">
                   <DayGrid
                     days={days}
                     activeNoteId={activeNoteId}
@@ -217,7 +217,7 @@ export default function CalendarRoot() {
                 </div>
               </div>
 
-              <div className="border-t border-[var(--border)] px-6 pb-6 pt-6 md:px-10 md:pb-10 lg:max-h-[32vh] lg:flex-none lg:overflow-y-auto lg:px-6 lg:pb-12 xl:px-8 xl:pb-16">
+              <div className="border-t border-[var(--border)] px-6 pb-6 pt-6 md:px-10 md:pb-10 lg:max-h-[28vh] lg:flex-none lg:overflow-y-auto lg:px-6 lg:pb-12 xl:px-8 xl:pb-16">
                 <NoteSection
                   activeNote={activeNote}
                   activeNoteId={activeNoteId}
