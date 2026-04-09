@@ -175,7 +175,6 @@ export default function CalendarRoot() {
                     onResetEditor={setMonthDefaultActive}
                     onSubmitActiveNote={submitActiveNote}
                     onSelectEntry={selectEntry}
-                    onSetMonthDefault={setMonthDefaultActive}
                     onUpdateNote={updateActiveNote}
                     visibleEntries={visibleEntries}
                   />

@@ -153,6 +153,11 @@ export const useCalendarRange = (currentDate) => {
     const existingSingle = monthNotes.entries.find(
       (entry) => entry.startKey === dateKey && entry.endKey === dateKey,
     );
+    const isSelectedSingleDate =
+      draftSelection?.start &&
+      draftSelection?.end &&
+      isSameDay(draftSelection.start, draftSelection.end) &&
+      isSameDay(date, draftSelection.start);
 
     if (!draftSelection?.start || draftSelection.mode === 'range') {
       if (existingSingle) {
@@ -168,6 +173,13 @@ export const useCalendarRange = (currentDate) => {
       }
 
       setDraftSelection({ start: date, end: date, mode: 'single' });
+      return;
+    }
+
+    if (isSelectedSingleDate) {
+      setActiveNoteId('month-default');
+      setDraftSelection(null);
+      setDraftNote(null);
       return;
     }
 

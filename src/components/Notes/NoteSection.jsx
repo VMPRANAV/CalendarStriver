@@ -33,7 +33,6 @@ export const NoteSection = ({
   onResetEditor,
   onSubmitActiveNote,
   onSelectEntry,
-  onSetMonthDefault,
   onUpdateNote,
   visibleEntries,
 }) => {
@@ -61,23 +60,9 @@ export const NoteSection = ({
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-stone-50/80 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-gray-600">
-            <StickyNote size={18} />
-            <h3 className="text-xs font-bold uppercase tracking-[0.24em]">Notes</h3>
-          </div>
-          <button
-            type="button"
-            onClick={onSetMonthDefault}
-            className={clsx(
-              'rounded-full border px-3 py-1 text-xs font-semibold transition-colors',
-              activeNoteId === 'month-default'
-                ? 'border-gray-900 bg-gray-900 text-white'
-                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400',
-            )}
-          >
-            Month Default
-          </button>
+        <div className="flex items-center gap-2 text-gray-600">
+          <StickyNote size={18} />
+          <h3 className="text-xs font-bold uppercase tracking-[0.24em]">Notes</h3>
         </div>
 
         <div className="rounded-2xl border border-[var(--border)] bg-white p-4">
