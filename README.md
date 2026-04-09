@@ -1,16 +1,65 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# 3D Interactive Wall Calendar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+A highly interactive, React-based calendar application designed with a physical "wall calendar" aesthetic. This project features advanced 3D transitions, date-range note-taking, and a responsive layout powered by Vite and Tailwind CSS.
 
-## React Compiler
+## 🚀 Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Immersive 3D Transitions
+* **Wall Calendar Flip**: Implemented using `framer-motion`, the calendar mimics the physics of a physical page flip when navigating between months.
+* **Perspective Engine**: Uses a `perspective-container` and `rotateX` transformations to give the UI depth and a realistic paper-turning feel.
 
-## Expanding the ESLint configuration
+### 2. Advanced Note-Taking & Range Selection
+* **Flexible Scoping**: Users can create notes for a specific day, a custom date range, or the entire month.
+* **Intelligent Date Range**: A custom `useCalendarRange` hook handles complex selection logic, allowing users to click a start and end date to highlight a range.
+* **Note Customization**: Each note supports individual color coding (6 distinct palettes) and text styling (Normal, Bold, Italic).
+* **Persistence**: All notes and theme preferences are saved locally using a custom `useLocalStorage` hook.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3. Dynamic UI & Interaction
+* **Sensory Feedback**: Features spatial audio effects, including a "paper flip" sound during navigation and a "trash" sound when deleting notes.
+* **Resizable Layout**: A custom-built draggable divider allows users to manually adjust the height of the notes panel.
+* **Theme Support**: Full support for Light and Dark modes with smooth CSS variable transitions.
+* **Keyboard Navigation**: Supports `ArrowUp` and `ArrowDown` keys for quick month-to-month flipping.
+
+### 4. Component-Driven Architecture
+* **Spiral Binder**: A decorative yet functional CSS-based component that anchors the 3D flip animation.
+* **Visual Grid**: A `DayGrid` component that intelligently renders days from `date-fns` to ensure accuracy across years and leap months.
+
+## 🛠️ Technical Stack
+* **Core**: React 19, Vite
+* **Styling**: Tailwind CSS 4 (with CSS variables for theming)
+* **Animations**: Framer Motion
+* **Date Logic**: date-fns
+* **Icons**: Lucide React
+* **Audio**: use-sound / Howler
+
+## 💻 Local Development
+
+Follow these steps to get the project running on your machine:
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/VMPRANAV/FrontendChallenge-Calendar/
+
+    ```
+
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+3.  **Start the development server**:
+    ```bash
+    npm run dev
+    ```
+
+4.  **Build for production**:
+    ```bash
+    npm run build
+    ```
+
+5.  **Lint the project**:
+    ```bash
+    npm run lint
+    ```
