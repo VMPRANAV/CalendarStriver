@@ -2,15 +2,24 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #ffffff;
   --border: #e5e4e7;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --surface-elevated: rgba(250, 250, 249, 0.8);
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
+  --button-hover: #f5f3f8;
+  --muted-text: #9ca3af;
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(15, 23, 42, 0.08) 0 24px 60px, rgba(15, 23, 42, 0.06) 0 10px 28px -18px;
+  --ring-offset: #ffffff;
+  --hero-panel: #f8fafc;
+  --hero-overlay-top: rgba(15, 23, 42, 0.16);
+  --hero-overlay-bottom: rgba(15, 23, 42, 0.7);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -31,10 +40,33 @@
   }
 }
 
+:root[data-theme='dark'] {
+  --text: #94a3b8;
+  --text-h: #f8fafc;
+  --bg: #0f172a;
+  --border: #1e293b;
+  --surface: #111c34;
+  --surface-muted: #0b1224;
+  --surface-elevated: #1e293b;
+  --code-bg: #334155;
+  --social-bg: rgba(51, 65, 85, 0.72);
+  --button-hover: #1e293b;
+  --muted-text: #64748b;
+  --shadow:
+    rgba(2, 6, 23, 0.5) 0 24px 60px, rgba(2, 6, 23, 0.4) 0 10px 28px -18px;
+  --ring-offset: #0f172a;
+  --hero-panel: #111c34;
+  --hero-overlay-top: rgba(15, 23, 42, 0.2);
+  --hero-overlay-bottom: rgba(2, 6, 23, 0.82);
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
   min-height: 100svh;
-  background: #fff;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 #root {

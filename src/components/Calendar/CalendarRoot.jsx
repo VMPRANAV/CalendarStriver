@@ -4,6 +4,7 @@ import * as FramerMotion from 'framer-motion';
 import { ImageAnchor } from '../Hero/ImageAnchor';
 import { SpiralBinder } from './SpiralBinder';
 import { useCalendarRange } from '../../hooks/useCalendarRange';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { Header } from './Header';
 import { DayGrid } from './DayGrid';
 import { NoteSection } from '../Notes/NoteSection';
@@ -40,6 +41,7 @@ const pageVariants = {
 export default function CalendarRoot() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1));
   const [transitionDirection, setTransitionDirection] = useState(1);
+  const [theme, setTheme] = useLocalStorage('calendar-theme', 'light');
   const flipAudioRef = useRef(null);
   const stopAudioTimeoutRef = useRef(null);
   const {
@@ -148,6 +150,18 @@ export default function CalendarRoot() {
     };
   }, [handleNextMonth, handlePrevMonth]);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+
+    return () => {
+      delete document.documentElement.dataset.theme;
+    };
+  }, [theme]);
+
+  const handleToggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  }, [setTheme]);
+
   const days = eachDayOfInterval({
     start: startOfWeek(startOfMonth(currentDate)),
     end: endOfWeek(endOfMonth(currentDate))
@@ -157,7 +171,7 @@ export default function CalendarRoot() {
 
   return (
     <div
-      className="flex min-h-screen w-full bg-white p-3 sm:p-4 lg:h-screen lg:min-h-0 lg:items-stretch lg:p-6"
+      className="flex min-h-screen w-full bg-[var(--bg)] p-3 transition-colors sm:p-4 lg:h-screen lg:min-h-0 lg:items-stretch lg:p-6"
       style={{ perspective: '1800px' }}
     >
       <FramerMotion.AnimatePresence mode="wait" custom={transitionDirection} initial={false}>
@@ -169,18 +183,24 @@ export default function CalendarRoot() {
           animate="center"
           exit="exit"
           style={{ transformStyle: 'preserve-3d', transformOrigin: 'top center' }}
-          className="calendar-container relative flex w-full flex-1 overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg)] shadow-[0_24px_60px_rgba(15,23,42,0.08)] lg:min-h-0"
+          className="calendar-container relative flex w-full flex-1 overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg)] lg:min-h-0"
         >
           <SpiralBinder />
           <div className="flex min-h-[calc(100vh-1.5rem)] w-full flex-col lg:h-full lg:min-h-0 lg:flex-row">
             {/* Left Panel: Hero */}
-            <div className="lg:w-1/2 lg:border-r lg:border-[var(--border)] bg-gray-50">
+            <div className="bg-[var(--hero-panel)] lg:w-1/2 lg:border-r lg:border-[var(--border)]">
               <ImageAnchor currentMonth={format(currentDate, 'MMMM')} />
             </div>
 
             {/* Right Panel: Functional Grid */}
             <div className="flex lg:w-1/2 flex-col p-6 md:p-10 lg:h-full lg:min-h-0 lg:p-12 xl:p-16">
-              <Header currentDate={currentDate} onPrev={handlePrevMonth} onNext={handleNextMonth} />
+              <Header
+                currentDate={currentDate}
+                onPrev={handlePrevMonth}
+                onNext={handleNextMonth}
+                theme={theme}
+                onToggleTheme={handleToggleTheme}
+              />
               <div className="flex flex-1 flex-col gap-8 lg:min-h-0">
                 <div className="flex-1">
                   <DayGrid

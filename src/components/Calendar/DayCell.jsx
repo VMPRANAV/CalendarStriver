@@ -37,7 +37,7 @@ export const DayCell = ({
       className={clsx(
         'day-cell h-16 w-full relative flex items-center justify-center text-lg transition-all lg:h-10',
         !isCurrentMonth && 'pointer-events-none opacity-10',
-        isActiveEntry && 'z-10 ring-2 ring-offset-1',
+        isActiveEntry && 'z-10 ring-2 ring-offset-1 ring-offset-[var(--ring-offset)]',
       )}
       style={{
         backgroundColor: entry

@@ -59,26 +59,26 @@ export const NoteSection = ({
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-stone-50/80 p-4">
-        <div className="flex items-center gap-2 text-gray-600">
+      <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] p-4">
+        <div className="flex items-center gap-2 text-[var(--text)]">
           <StickyNote size={18} />
           <h3 className="text-xs font-bold uppercase tracking-[0.24em]">Notes</h3>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--muted-text)]">
                 {activeNote.type === 'month' ? 'Month Note' : activeNote.type === 'single' ? 'Single Date Note' : 'Date Range Note'}
               </p>
-              <p className="text-sm font-semibold text-gray-900">{activeNote.label}</p>
+              <p className="text-sm font-semibold text-[var(--text-h)]">{activeNote.label}</p>
             </div>
             {activeNote.type !== 'month' && (
               <button
                 type="button"
                 onClick={() => handleDelete(activeNote.id)}
                 aria-label="Delete active note"
-                className="rounded-full border border-red-200 p-2 text-red-500 transition-colors hover:bg-red-50"
+                className="rounded-full border border-red-300/60 p-2 text-red-500 transition-colors hover:bg-red-500/10"
               >
                 <Trash2 size={16} />
               </button>
@@ -87,7 +87,7 @@ export const NoteSection = ({
 
           <div className="mb-4 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <Palette size={14} className="text-gray-500" />
+              <Palette size={14} className="text-[var(--text)]" />
               <div className="flex flex-wrap gap-2">
                 {NOTE_COLORS.map((color) => (
                   <button
@@ -97,7 +97,7 @@ export const NoteSection = ({
                     onClick={() => onUpdateNote({ color })}
                     className={clsx(
                       'h-6 w-6 rounded-full border-2 transition-transform hover:scale-105',
-                      activeNote.color === color ? 'border-gray-900' : 'border-white',
+                      activeNote.color === color ? 'border-[var(--text-h)]' : 'border-[var(--surface)]',
                     )}
                     style={{ backgroundColor: color }}
                   />
@@ -106,7 +106,7 @@ export const NoteSection = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <Type size={14} className="text-gray-500" />
+              <Type size={14} className="text-[var(--text)]" />
               <div className="flex flex-wrap gap-2">
                 {STYLE_OPTIONS.map((option) => (
                   <button
@@ -116,8 +116,8 @@ export const NoteSection = ({
                     className={clsx(
                       'rounded-full border px-3 py-1 text-xs transition-colors',
                       activeNote.textStyle === option.value
-                        ? 'border-gray-900 bg-gray-900 text-white'
-                        : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400',
+                        ? 'border-[var(--text-h)] bg-[var(--text-h)] text-[var(--bg)]'
+                        : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--muted-text)]',
                     )}
                   >
                     {option.label}
@@ -140,7 +140,7 @@ export const NoteSection = ({
             }}
             placeholder="Write a note for this month, date, or selected range..."
             className={clsx(
-              'min-h-[140px] w-full resize-none rounded-2xl border border-[var(--border)] bg-white p-4 text-gray-700 shadow-sm focus:border-gray-300 focus:outline-none',
+              'min-h-[140px] w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-[var(--text)] shadow-sm focus:border-[var(--muted-text)] focus:outline-none',
               textStyleClassName[activeNote.textStyle],
             )}
           />
@@ -153,8 +153,8 @@ export const NoteSection = ({
               className={clsx(
                 'rounded-full px-4 py-2 text-sm font-semibold transition-colors',
                 hasContent
-                  ? 'bg-gray-900 text-white hover:bg-gray-800'
-                  : 'cursor-not-allowed bg-gray-200 text-gray-400',
+                  ? 'bg-[var(--text-h)] text-[var(--bg)] hover:opacity-90'
+                  : 'cursor-not-allowed bg-[var(--button-hover)] text-[var(--muted-text)]',
               )}
             >
               {canAddToList ? 'Add To List' : 'Done'}
@@ -163,14 +163,14 @@ export const NoteSection = ({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-4">
-        <div className="mb-4 flex items-center gap-2 text-gray-600">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+        <div className="mb-4 flex items-center gap-2 text-[var(--text)]">
           <CalendarRange size={16} />
           <h4 className="text-xs font-bold uppercase tracking-[0.22em]">This Month&apos;s Saved Notes</h4>
         </div>
 
         {visibleEntries.length === 0 ? (
-          <p className="text-sm italic text-gray-400">No single-date or range notes yet for this month.</p>
+          <p className="text-sm italic text-[var(--muted-text)]">No single-date or range notes yet for this month.</p>
         ) : (
           <div className="flex flex-col gap-3">
             {visibleEntries.map((entry) => (
@@ -183,10 +183,10 @@ export const NoteSection = ({
                     onSelectEntry(entry.id);
                   }}
                   className={clsx(
-                    'relative flex w-full items-start justify-between gap-3 rounded-2xl border bg-white p-3 text-left transition-colors',
+                    'relative flex w-full items-start justify-between gap-3 rounded-2xl border bg-[var(--surface)] p-3 text-left transition-colors',
                     activeNoteId === entry.id
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-[var(--border)] hover:border-gray-300',
+                      ? 'border-[var(--text-h)] bg-[var(--surface-muted)]'
+                      : 'border-[var(--border)] hover:border-[var(--muted-text)]',
                   )}
                   role="button"
                   tabIndex={0}
@@ -200,12 +200,12 @@ export const NoteSection = ({
                   <div className="min-w-0">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--muted-text)]">
                         {entry.startKey === entry.endKey ? 'Single Date' : 'Range'}
                       </span>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900">{formatEntryLabel(entry)}</p>
-                    <p className={clsx('mt-1 text-sm text-gray-500', textStyleClassName[entry.textStyle])}>
+                    <p className="text-sm font-semibold text-[var(--text-h)]">{formatEntryLabel(entry)}</p>
+                    <p className={clsx('mt-1 text-sm text-[var(--text)]', textStyleClassName[entry.textStyle])}>
                       {entry.content || 'Empty note'}
                     </p>
                   </div>
@@ -218,7 +218,7 @@ export const NoteSection = ({
                         event.stopPropagation();
                         handleDelete(entry.id);
                       }}
-                      className="shrink-0 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500"
+                      className="shrink-0 rounded-full p-2 text-[var(--muted-text)] transition-colors hover:bg-[var(--button-hover)] hover:text-red-500"
                     >
                       <Trash2 size={16} />
                     </button>

@@ -8,7 +8,12 @@ export const ImageAnchor = ({ currentMonth }) => {
         alt="Calendar Hero"
       />
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, var(--hero-overlay-top), transparent, var(--hero-overlay-bottom))',
+        }}
+      />
       
       <div className="absolute bottom-8 left-8">
         <h1 className="text-white m-0 text-5xl font-black uppercase tracking-tighter leading-none opacity-90">

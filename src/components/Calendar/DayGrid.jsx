@@ -13,7 +13,7 @@ export const DayGrid = ({
   return (
     <div className="grid grid-cols-7 gap-y-1">
       {WEEKDAYS.map((day) => (
-        <div key={day} className="text-center text-[10px] font-bold text-gray-400 mb-4 tracking-widest">
+        <div key={day} className="mb-4 text-center text-[10px] font-bold tracking-widest text-[var(--muted-text)]">
           {day}
         </div>
       ))}
